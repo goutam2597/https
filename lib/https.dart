@@ -1,4 +1,4 @@
-library pro_http;
+library;
 
 export 'src/client.dart';
 export 'src/adapter.dart';

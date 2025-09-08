@@ -10,7 +10,7 @@ import 'response.dart';
 import 'retry.dart';
 import 'utils.dart';
 
-class ProHttp {
+class Https {
   final Uri? baseUrl;
   final Map<String, String> defaultHeaders;
   final Map<String, String> defaultQuery;
@@ -20,7 +20,7 @@ class ProHttp {
   final CookieJar cookieJar;
   final HttpAdapter _adapter;
 
-  ProHttp({
+  Https({
     this.baseUrl,
     Map<String, String>? defaultHeaders,
     Map<String, String>? defaultQuery,

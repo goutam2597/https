@@ -40,7 +40,7 @@ class FakeAdapter extends HttpAdapter {
 
 void main() {
   test('basic json decode', () async {
-    final client = ProHttp(
+    final client = Https(
       baseUrl: Uri.parse('https://example.com'),
       interceptors: [LogInterceptor()],
       adapter: FakeAdapter(),
@@ -53,7 +53,7 @@ void main() {
   });
 
   test('not found text', () async {
-    final client = ProHttp(baseUrl: Uri.parse('https://example.com'), adapter: FakeAdapter());
+    final client = Https(baseUrl: Uri.parse('https://example.com'), adapter: FakeAdapter());
     final resp = await client.get('/missing');
     expect(resp.ok, false);
     expect(resp.data, 'nope');
