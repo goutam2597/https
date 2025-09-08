@@ -1,0 +1,26 @@
+name: https
+description: "A new Flutter project."
+version: 1.0.0
+homepage:
+
+environment:
+  sdk: ^3.9.0
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  http: ^1.5.0
+  http_parser: ^4.1.2
+  async: ^2.13.0
+  collection: ^1.19.1
+  meta: ^1.16.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+
+flutter:
