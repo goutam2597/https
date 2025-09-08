@@ -5,10 +5,8 @@ import 'response.dart';
 abstract class Interceptor {
   FutureOr<RequestOptions> onRequest(RequestOptions options) => options;
 
-  /// return the same or a modified response
   FutureOr<Response<dynamic>> onResponse(Response resp) => resp;
 
-  /// Throw to propagate; return a Response to recover; or throw another error
   FutureOr onError(Object error, StackTrace st) => Future.error(error, st);
 }
 

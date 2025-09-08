@@ -13,7 +13,8 @@ class Multipart {
     final b = List.generate(24, (_) => rand.nextInt(36))
         .map((n) => n.toRadixString(36))
         .join();
-    return Multipart._('----prohttp-$b');
+    return Multipart._('----https-$b');
+    // (changed prefix from prohttp to https)
   }
 
   void addField(String name, String value, {String? contentType}) {

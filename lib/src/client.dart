@@ -24,13 +24,17 @@ class Https {
     this.baseUrl,
     Map<String, String>? defaultHeaders,
     Map<String, String>? defaultQuery,
-    this.requestTimeout,
+    Duration? requestTimeout,
     List<Interceptor>? interceptors,
     RetryPolicy? retryPolicy,
     CookieJar? cookieJar,
     HttpAdapter? adapter,
-  })  : defaultHeaders = {...?defaultHeaders},
+  })  : defaultHeaders = {
+    'Accept': 'application/json', // ensure JSON unless caller overrides
+    ...?defaultHeaders,
+  },
         defaultQuery = {...?defaultQuery},
+        requestTimeout = requestTimeout ?? const Duration(seconds: 25),
         interceptors = [...?interceptors],
         retryPolicy = retryPolicy ?? const RetryPolicy(),
         cookieJar = cookieJar ?? CookieJar(),
@@ -207,7 +211,6 @@ class Https {
     final options =
     _buildOptions(method, url, headers: headers, query: query, data: data);
 
-    // Run through interceptors + retry
     final sw = Stopwatch()..start();
     try {
       final resp = await runWithRetry<Response<List<int>>>(() async {
@@ -220,7 +223,7 @@ class Https {
           if (cookieHeader != null) 'Cookie': [
             if (reqAfter.headers['Cookie'] != null) reqAfter.headers['Cookie']!,
             cookieHeader
-          ].where((e) => e != null && e.isNotEmpty).join('; ')
+          ].where((e) => e.isNotEmpty).join('; ')
         };
 
         final finalReq = reqAfter.copyWith(headers: headersWithCookie);
@@ -248,10 +251,8 @@ class Https {
           data: decoded,
         );
 
-        // Response interceptors
         final r2 = await _applyResponseInterceptors(wrapped);
 
-        // Decide if retry by response
         if (retryPolicy.retryOnResponse?.call(r2) ?? false) {
           throw _RetryByResponse();
         }
@@ -274,9 +275,8 @@ class Https {
         totalDuration: sw.elapsed,
       );
     } catch (e, st) {
-      // Error interceptors
       await _applyErrorInterceptors(e, st);
-      rethrow; // if not recovered
+      rethrow;
     }
   }
 
@@ -298,7 +298,7 @@ class Https {
       url: uri,
       headers: normalizeHeaders({...defaultHeaders, ...?headers}),
       body: data,
-      timeout: requestTimeout,
+      timeout: requestTimeout, // pass timeout down
     );
   }
 
@@ -327,7 +327,6 @@ class Https {
       try {
         final res = await i.onError(err, trace);
         if (res is Response) {
-          // recovered to a response: stop error propagation
           return;
         }
       } catch (e, s) {
@@ -335,7 +334,6 @@ class Https {
         trace = s;
       }
     }
-    // if not recovered, let caller rethrow
   }
 
   Response<dynamic> _decodeBody(

@@ -1,4 +1,4 @@
-library;
+library https;
 
 export 'src/client.dart';
 export 'src/adapter.dart';
